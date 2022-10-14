@@ -40,7 +40,7 @@ CSPICE | **rust-spice** | Description
 [gcpool_c][gcpool_c link] | *TODO*
 [gdpool_c][gdpool_c link] | *TODO*
 [georec_c][georec_c link] | [`raw::georec`] |  Geodetic to rectangular coordinates
-[getfov_c][getfov_c link] | *TODO*
+[getfov_c][getfov_c link] | [`raw::getfov`] |
 [gipool_c][gipool_c link] | *TODO*
 [illumf_c][illumf_c link] | [`raw::illumf`] | Illumination angles, general source, return flags
 [kclear_c][kclear_c link] | [`raw::kclear`] | Keeper clear
@@ -157,8 +157,8 @@ pub mod raw;
 pub use self::neat::{bodc2n, dskp02, dskv02, kdata, timout};
 pub use self::raw::{
     bodfnd, bodn2c, dascls, dasopr, dlabfs, dskgd, dskn02, dskobj, dskx02, dskz02, furnsh, georec,
-    illumf, kclear, ktotal, latrec, mxv, pxform, pxfrm2, radrec, recrad, spkezr, spkpos, str2et,
-    unload, vcrss, vdot, vsep, xpose, DLADSC, DSKDSC,
+    getfov, illumf, kclear, ktotal, latrec, mxv, pxform, pxfrm2, radrec, recrad, sincpt, spkezr,
+    spkpos, str2et, unload, vcrss, vdot, vsep, xpose, DLADSC, DSKDSC,
 };
 
 /**

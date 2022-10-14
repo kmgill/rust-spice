@@ -4,7 +4,10 @@ A Rust idiomatic CSPICE wrapper built with [procedural macros][`spice_derive`].
 
 use crate::{c, cstr, fcstr, get_scalar, get_varr, init_scalar, malloc, mallocstr, mptr};
 use spice_derive::{cspice_proc, return_output};
-use std::ops::{Deref, DerefMut};
+use std::{
+    convert::TryInto,
+    ops::{Deref, DerefMut},
+};
 
 #[allow(clippy::upper_case_acronyms)]
 pub type DLADSC = c::SpiceDLADescr;
@@ -420,4 +423,60 @@ cspice_proc! {
     Transpose a 3x3 matrix.
      */
     pub fn xpose(m1: [[f64; 3]; 3]) -> [[f64; 3]; 3] {}
+}
+
+cspice_proc! {
+    /**
+    Compute, for a given observer and a ray emanating from the
+    observer, the surface intercept of the ray on a target body at
+    a specified epoch, optionally corrected for light time and
+    stellar aberration.
+     */
+    pub fn sincpt(method:&str,
+                    target: &str,
+                    et: f64,
+                    fixred: &str,
+                    abcorr: &str,
+                    obsrvr: &str,
+                    dref: &str,
+                    dvec: [f64; 3]) -> ([f64; 3], f64, [f64; 3], bool) {
+                    }
+}
+
+/**
+   Return the field-of-view (FOV) parameters for a specified instrument.
+*/
+pub fn getfov(
+    instid: i32,
+    room: i32,
+    shapelen: i32,
+    framelen: i32,
+) -> (String, String, [f64; 3], i32, Vec<[f64; 3]>) {
+    let out_shape = mallocstr!(shapelen);
+    let out_frame = mallocstr!(framelen);
+    let out_bsight = malloc!(f64, 3);
+    let mut out_n = init_scalar!();
+    let out_bounds = malloc!([f64; 3], room);
+    unsafe {
+        crate::c::getfov_c(
+            instid,
+            room,
+            shapelen,
+            framelen,
+            out_shape,
+            out_frame,
+            out_bsight,
+            mptr!(out_n),
+            out_bounds,
+        );
+        (
+            fcstr!(out_shape),
+            fcstr!(out_frame),
+            std::slice::from_raw_parts(out_bsight, 3)
+                .try_into()
+                .expect("Invalid array length"),
+            get_scalar!(out_n),
+            get_varr!(out_bounds, get_scalar!(out_n)),
+        )
+    }
 }
