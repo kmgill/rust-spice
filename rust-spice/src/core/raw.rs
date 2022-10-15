@@ -480,3 +480,32 @@ pub fn getfov(
         )
     }
 }
+
+cspice_proc! {
+    /**
+     Determine the intersection of a line-of-sight vector with the surface of an ellipsoid.
+     */
+    pub fn surfpt(positn:[f64; 3], u:[f64; 3], a:f64, b:f64, c:f64) -> ([f64; 3], bool) {}
+}
+
+/**
+Fetch from the kernel pool the double precision values
+  of an item associated with a body.
+*/
+pub fn bodvrd(bodynm: &str, item: &str, maxn: i32) -> (i32, Vec<f64>) {
+    let mut varout_0 = init_scalar!();
+    let varout_1 = malloc!(f64, maxn);
+    unsafe {
+        crate::c::bodvrd_c(
+            crate::cstr!(bodynm),
+            crate::cstr!(item),
+            maxn,
+            mptr!(varout_0),
+            varout_1,
+        );
+        (
+            get_scalar!(varout_0),
+            std::slice::from_raw_parts(varout_1, get_scalar!(varout_0) as usize).to_vec(),
+        )
+    }
+}
